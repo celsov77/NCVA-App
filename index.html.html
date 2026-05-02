@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#4B1D6B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NCVA">
+<title>NCVA – Neurocirugía Veterinaria Araucanía</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --violeta: #4B1D6B;
+  --violeta2: #6A2C91;
+  --violeta3: #8B45B5;
+  --violeta-light: #F0E6F7;
+  --blanco: #FFFFFF;
+  --gris: #F5F5F7;
+  --gris2: #E8E8EC;
+  --gris3: #9A9AA8;
+  --texto: #1A1A2E;
+  --exito: #2ECC71;
+  --alerta: #E74C3C;
+  --naranja: #F39C12;
+  --sombra: 0 4px 24px rgba(75,29,107,0.12);
+  --sombra2: 0 2px 8px rgba(75,29,107,0.08);
+  --radio: 16px;
+  --radio-sm: 10px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--gris);
+  color: var(--texto);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── PANTALLA PIN ── */
+#pin-screen {
+  position: fixed; inset: 0;
+  background: linear-gradient(145deg, var(--violeta) 0%, var(--violeta2) 60%, #3A1255 100%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 9999;
+  gap: 32px;
+}
+#pin-screen .logo-area { text-align: center; }
+#pin-screen .logo-circle {
+  width: 96px; height: 96px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 16px;
+  font-size: 42px;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255,255,255,0.3);
+}
+#pin-screen h1 {
+  font-family: 'DM Serif Display', serif;
+  color: white; font-size: 28px; font-weight: 400;
+  letter-spacing: 0.02em;
+}
+#pin-screen p { color: rgba(255,255,255,0.65); font-size: 13px; margin-top: 4px; }
+.pin-box {
+  background: rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 32px;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.2);
+  text-align: center;
+  width: 280px;
+}
+.pin-dots {
+  display: flex; gap: 12px; justify-content: center; margin-bottom: 24px;
+}
+.pin-dot {
+  width: 14px; height: 14px; border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  border: 2px solid rgba(255,255,255,0.4);
+  transition: all 0.2s;
+}
+.pin-dot.filled { background: white; }
+.pin-pad {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+}
+.pin-btn {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: white;
+  font-size: 20px; font-weight: 500;
+  padding: 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif;
+}
+.pin-btn:hover { background: rgba(255,255,255,0.22); transform: scale(1.04); }
+.pin-btn:active { transform: scale(0.96); }
+.pin-error { color: #FF8A8A; font-size: 13px; margin-top: 12px; min-height: 18px; }
+.pin-setup-link { color: rgba(255,255,255,0.5); font-size: 12px; cursor: pointer; margin-top: 8px; text-decoration: underline; }
+
+/* ── APP LAYOUT ── */
+#app { display: none; min-height: 100vh; }
+
+/* TOP BAR */
+.topbar {
+  background: var(--violeta);
+  color: white;
+  padding: 0 24px;
+  height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 16px rgba(75,29,107,0.3);
+}
+.topbar-brand { display: flex; align-items: center; gap: 12px; }
+.topbar-icon { font-size: 24px; }
+.topbar-title { font-family: 'DM Serif Display', serif; font-size: 20px; font-weight: 400; }
+.topbar-sub { font-size: 11px; opacity: 0.6; letter-spacing: 0.05em; text-transform: uppercase; }
+.topbar-actions { display: flex; align-items: center; gap: 8px; }
+.topbar-btn {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: white; font-size: 13px;
+  padding: 8px 14px; border-radius: 8px;
+  cursor: pointer; transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif;
+}
+.topbar-btn:hover { background: rgba(255,255,255,0.2); }
+
+/* NAV TABS */
+.nav-tabs {
+  background: white;
+  display: flex; border-bottom: 1px solid var(--gris2);
+  overflow-x: auto; padding: 0 16px;
+}
+.nav-tab {
+  padding: 14px 20px; font-size: 14px; font-weight: 500;
+  color: var(--gris3); border-bottom: 3px solid transparent;
+  cursor: pointer; white-space: nowrap; transition: all 0.2s;
+  display: flex; align-items: center; gap: 6px;
+}
+.nav-tab:hover { color: var(--violeta2); }
+.nav-tab.active { color: var(--violeta); border-bottom-color: var(--violeta); }
+
+/* MAIN CONTENT */
+.main { padding: 24px; max-width: 900px; margin: 0 auto; }
+
+/* SECTION PANELS */
+.section { display: none; animation: fadeIn 0.3s ease; }
+.section.active { display: block; }
+@keyframes fadeIn { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform: none; } }
+
+/* CARDS */
+.card {
+  background: white; border-radius: var(--radio);
+  box-shadow: var(--sombra2); overflow: hidden; margin-bottom: 16px;
+}
+.card-header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--gris2);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card-title { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.card-body { padding: 24px; }
+
+/* BOTONES */
+.btn {
+  padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: 500;
+  cursor: pointer; border: none; transition: all 0.15s; display: inline-flex;
+  align-items: center; gap: 8px; font-family: 'DM Sans', sans-serif;
+}
+.btn-primary { background: var(--violeta); color: white; }
+.btn-primary:hover { background: var(--violeta2); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(75,29,107,0.3); }
+.btn-secondary { background: var(--gris); color: var(--texto); border: 1px solid var(--gris2); }
+.btn-secondary:hover { background: var(--gris2); }
+.btn-danger { background: var(--alerta); color: white; }
+.btn-danger:hover { background: #C0392B; }
+.btn-success { background: var(--exito); color: white; }
+.btn-sm { padding: 8px 14px; font-size: 13px; }
+.btn-icon { padding: 8px; min-width: 36px; justify-content: center; }
+
+/* FORMULARIOS */
+.form-group { margin-bottom: 16px; }
+.form-label { display: block; font-size: 13px; font-weight: 500; color: var(--gris3); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
+.form-input, .form-select {
+  width: 100%; padding: 12px 14px;
+  border: 1.5px solid var(--gris2); border-radius: var(--radio-sm);
+  font-size: 14px; font-family: 'DM Sans', sans-serif;
+  background: white; color: var(--texto);
+  transition: border-color 0.2s;
+  appearance: none;
+}
+.form-input:focus, .form-select:focus {
+  outline: none; border-color: var(--violeta3);
+  box-shadow: 0 0 0 3px rgba(75,29,107,0.08);
+}
+
+/* ESPECIE TOGGLE */
+.especie-toggle { display: flex; gap: 12px; }
+.especie-btn {
+  flex: 1; padding: 16px; border-radius: 12px;
+  border: 2px solid var(--gris2); background: white;
+  cursor: pointer; transition: all 0.2s; text-align: center;
+  font-size: 24px; line-height: 1;
+}
+.especie-btn span { display: block; font-size: 13px; font-weight: 500; color: var(--gris3); margin-top: 6px; }
+.especie-btn:hover { border-color: var(--violeta3); }
+.especie-btn.selected { border-color: var(--violeta); background: var(--violeta-light); }
+.especie-btn.selected span { color: var(--violeta); }
+
+/* LISTA PACIENTES */
+.search-bar { position: relative; margin-bottom: 16px; }
+.search-bar input { padding-left: 40px; }
+.search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--gris3); font-size: 16px; }
+
+.paciente-list { display: flex; flex-direction: column; gap: 10px; }
+.paciente-item {
+  background: white; border-radius: 12px;
+  padding: 16px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  box-shadow: var(--sombra2);
+  cursor: pointer; transition: all 0.2s;
+  border: 1.5px solid transparent;
+}
+.paciente-item:hover { border-color: var(--violeta3); box-shadow: var(--sombra); }
+.paciente-info { flex: 1; }
+.paciente-ficha { font-size: 16px; font-weight: 600; color: var(--violeta); }
+.paciente-meta { font-size: 13px; color: var(--gris3); margin-top: 2px; }
+.paciente-estado { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; }
+.estado-tratamiento { background: #FEF9E7; color: #D4AC0D; }
+.estado-alta { background: #EAFAF1; color: #1E8449; }
+.estado-derivar { background: #EBF5FB; color: #1A5276; }
+.paciente-actions { display: flex; gap: 6px; margin-left: 12px; }
+
+/* ACCORDION VITAMIN D */
+.accordion { display: flex; flex-direction: column; gap: 8px; }
+.acc-item { border-radius: 12px; overflow: hidden; border: 1.5px solid var(--gris2); background: white; }
+.acc-header {
+  padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer; transition: background 0.2s; user-select: none;
+}
+.acc-header:hover { background: var(--violeta-light); }
+.acc-header-left { display: flex; align-items: center; gap: 12px; }
+.acc-letter {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: var(--violeta); color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Serif Display', serif; font-size: 18px;
+  flex-shrink: 0;
+}
+.acc-title { font-weight: 600; font-size: 15px; }
+.acc-subtitle { font-size: 12px; color: var(--gris3); }
+.acc-chevron { color: var(--gris3); transition: transform 0.25s; font-size: 18px; }
+.acc-item.open .acc-chevron { transform: rotate(180deg); }
+.acc-body { padding: 4px 20px 16px; display: none; }
+.acc-item.open .acc-body { display: block; }
+
+.diag-list { display: flex; flex-direction: column; gap: 6px; padding-top: 8px; }
+.diag-chip {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 8px; cursor: pointer;
+  border: 1.5px solid var(--gris2); transition: all 0.15s;
+  font-size: 14px;
+}
+.diag-chip:hover { border-color: var(--violeta3); background: var(--violeta-light); }
+.diag-chip.selected { border-color: var(--violeta); background: var(--violeta-light); color: var(--violeta); font-weight: 500; }
+.diag-check { width: 18px; height: 18px; border-radius: 4px; border: 2px solid var(--gris2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.diag-chip.selected .diag-check { background: var(--violeta); border-color: var(--violeta); }
+.diag-chip.selected .diag-check::after { content: '✓'; color: white; font-size: 11px; }
+
+/* EXAMENES */
+.exam-categories { display: flex; flex-direction: column; gap: 16px; }
+.exam-cat-title { font-size: 13px; font-weight: 600; color: var(--gris3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+.exam-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.exam-chip {
+  padding: 8px 14px; border-radius: 20px; font-size: 13px; font-weight: 500;
+  border: 1.5px solid var(--gris2); background: white; cursor: pointer; transition: all 0.15s;
+}
+.exam-chip:hover { border-color: var(--violeta3); }
+.exam-chip.selected { background: var(--violeta); border-color: var(--violeta); color: white; }
+
+/* ESTADO SELECTOR */
+.estado-options { display: flex; flex-direction: column; gap: 10px; }
+.estado-option {
+  padding: 16px 20px; border-radius: 12px; border: 2px solid var(--gris2);
+  cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 12px;
+}
+.estado-option:hover { border-color: var(--violeta3); }
+.estado-option.selected { border-color: var(--violeta); background: var(--violeta-light); }
+.estado-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+
+/* WIZARD NAVIGATION */
+.wizard-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; }
+.wizard-steps { display: flex; gap: 6px; align-items: center; }
+.wizard-step { width: 8px; height: 8px; border-radius: 50%; background: var(--gris2); transition: all 0.2s; }
+.wizard-step.active { background: var(--violeta); width: 20px; border-radius: 4px; }
+.wizard-step.done { background: var(--violeta3); }
+
+/* DASHBOARD */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.stat-card {
+  background: white; border-radius: var(--radio); padding: 20px;
+  box-shadow: var(--sombra2); text-align: center;
+}
+.stat-num { font-family: 'DM Serif Display', serif; font-size: 36px; color: var(--violeta); }
+.stat-label { font-size: 12px; color: var(--gris3); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px; }
+
+.chart-bar-container { display: flex; flex-direction: column; gap: 12px; }
+.chart-bar-row { display: flex; align-items: center; gap: 12px; }
+.chart-bar-label { font-size: 13px; min-width: 160px; color: var(--texto); }
+.chart-bar-track { flex: 1; height: 10px; background: var(--gris2); border-radius: 5px; overflow: hidden; }
+.chart-bar-fill { height: 100%; border-radius: 5px; background: linear-gradient(90deg, var(--violeta), var(--violeta3)); transition: width 0.6s ease; }
+.chart-bar-count { font-size: 12px; color: var(--gris3); min-width: 20px; }
+
+.donut-container { display: flex; align-items: center; gap: 32px; flex-wrap: wrap; }
+.donut-legend { display: flex; flex-direction: column; gap: 12px; }
+.donut-legend-item { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+.donut-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+
+/* MODAL */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(26,26,46,0.5);
+  display: flex; align-items: center; justify-content: center; z-index: 500;
+  padding: 16px; backdrop-filter: blur(4px);
+}
+.modal-overlay.hidden { display: none; }
+.modal {
+  background: white; border-radius: 20px; width: 100%; max-width: 560px;
+  max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 80px rgba(75,29,107,0.25);
+  animation: modalIn 0.25s ease;
+}
+@keyframes modalIn { from { opacity:0; transform: scale(0.95) translateY(10px); } to { opacity:1; transform: none; } }
+.modal-header { padding: 24px 28px 0; }
+.modal-title { font-family: 'DM Serif Display', serif; font-size: 22px; }
+.modal-body { padding: 20px 28px 28px; }
+.modal-footer { padding: 0 28px 24px; display: flex; gap: 10px; justify-content: flex-end; }
+
+/* TOAST */
+.toast {
+  position: fixed; bottom: 24px; right: 24px;
+  background: var(--violeta); color: white;
+  padding: 14px 20px; border-radius: 12px; font-size: 14px;
+  box-shadow: 0 8px 24px rgba(75,29,107,0.4);
+  z-index: 9000; transform: translateY(80px); opacity: 0;
+  transition: all 0.3s; display: flex; align-items: center; gap: 8px;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* EMPTY STATE */
+.empty-state { text-align: center; padding: 60px 20px; color: var(--gris3); }
+.empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state p { font-size: 15px; }
+
+/* SELECCIÓN RESUMEN */
+.resumen-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.resumen-tag { font-size: 12px; padding: 4px 10px; border-radius: 20px; background: var(--violeta-light); color: var(--violeta); }
+
+/* SEARCH DIAG */
+.diag-search { width: 100%; margin-bottom: 12px; padding: 10px 14px; border: 1.5px solid var(--gris2); border-radius: 8px; font-size: 14px; font-family: 'DM Sans', sans-serif; }
+.diag-search:focus { outline: none; border-color: var(--violeta3); }
+
+/* OTROS campo libre */
+.otros-input { margin-top: 8px; }
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  .topbar { padding: 0 16px; }
+  .topbar-title { font-size: 17px; }
+  .main { padding: 16px; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--gris2); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- PIN SCREEN -->
+<div id="pin-screen">
+  <div class="logo-area">
+    <div class="logo-circle">🧠</div>
+    <h1>NCVA</h1>
+    <p>Neurocirugía Veterinaria Araucanía</p>
+  </div>
+  <div class="pin-box">
+    <div class="pin-dots" id="pin-dots">
+      <div class="pin-dot" id="d0"></div>
+      <div class="pin-dot" id="d1"></div>
+      <div class="pin-dot" id="d2"></div>
+      <div class="pin-dot" id="d3"></div>
+    </div>
+    <div class="pin-pad">
+      <button class="pin-btn" onclick="pinDigit('1')">1</button>
+      <button class="pin-btn" onclick="pinDigit('2')">2</button>
+      <button class="pin-btn" onclick="pinDigit('3')">3</button>
+      <button class="pin-btn" onclick="pinDigit('4')">4</button>
+      <button class="pin-btn" onclick="pinDigit('5')">5</button>
+      <button class="pin-btn" onclick="pinDigit('6')">6</button>
+      <button class="pin-btn" onclick="pinDigit('7')">7</button>
+      <button class="pin-btn" onclick="pinDigit('8')">8</button>
+      <button class="pin-btn" onclick="pinDigit('9')">9</button>
+      <button class="pin-btn" onclick="pinClear()" style="font-size:14px">⌫</button>
+      <button class="pin-btn" onclick="pinDigit('0')">0</button>
+      <button class="pin-btn" onclick="pinDigit('')" style="opacity:0.2" disabled></button>
+    </div>
+    <div class="pin-error" id="pin-error"></div>
+    <div class="pin-setup-link" id="pin-setup-link" onclick="showPinSetup()">Cambiar PIN</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-brand">
+      <span class="topbar-icon">🧠</span>
+      <div>
+        <div class="topbar-title">NCVA</div>
+        <div class="topbar-sub">Neurocirugía Veterinaria Araucanía</div>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <button class="topbar-btn" onclick="openNewPaciente()">+ Paciente</button>
+      <button class="topbar-btn btn-icon" onclick="lockApp()" title="Cerrar sesión">🔒</button>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="showSection('pacientes', this)">📋 Pacientes</div>
+    <div class="nav-tab" onclick="showSection('dashboard', this)">📊 Dashboard</div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- SECCIÓN PACIENTES -->
+    <div class="section active" id="sec-pacientes">
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="form-input" id="search-input" placeholder="Buscar por ficha, clínica…" oninput="renderPacientes()" style="padding-left:40px">
+      </div>
+      <div id="paciente-list-container"></div>
+    </div>
+
+    <!-- SECCIÓN DASHBOARD -->
+    <div class="section" id="sec-dashboard">
+      <div class="stats-grid" id="stats-grid"></div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-header"><div class="card-title">🐾 Distribución por especie</div></div>
+        <div class="card-body" id="chart-especie"></div>
+      </div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-header"><div class="card-title">📊 Diagnósticos más frecuentes</div></div>
+        <div class="card-body" id="chart-diag"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">🏥 Clínicas de origen</div></div>
+        <div class="card-body" id="chart-clinica"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PACIENTE WIZARD -->
+<div class="modal-overlay hidden" id="modal-paciente">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Nuevo Paciente</div>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer" id="modal-footer"></div>
+  </div>
+</div>
+
+<!-- MODAL DETALLE PACIENTE -->
+<div class="modal-overlay hidden" id="modal-detalle">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-header">
+      <div class="modal-title" id="detalle-title"></div>
+    </div>
+    <div class="modal-body" id="detalle-body"></div>
+    <div class="modal-footer" id="detalle-footer"></div>
+  </div>
+</div>
+
+<!-- MODAL PIN SETUP -->
+<div class="modal-overlay hidden" id="modal-pin-setup">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-header"><div class="modal-title">Cambiar PIN</div></div>
+    <div class="modal-body">
+      <p style="color:var(--gris3);font-size:14px;margin-bottom:16px">El PIN actual por defecto es <strong>1234</strong>.</p>
+      <div class="form-group"><label class="form-label">PIN Actual</label><input type="password" class="form-input" id="pin-old" maxlength="4" placeholder="••••"></div>
+      <div class="form-group"><label class="form-label">PIN Nuevo</label><input type="password" class="form-input" id="pin-new1" maxlength="4" placeholder="••••"></div>
+      <div class="form-group"><label class="form-label">Confirmar PIN Nuevo</label><input type="password" class="form-input" id="pin-new2" maxlength="4" placeholder="••••"></div>
+      <div id="pin-change-msg" style="color:var(--alerta);font-size:13px;min-height:18px"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closePinSetup()">Cancelar</button>
+      <button class="btn btn-primary" onclick="doChangePin()">Guardar PIN</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════
+// DATOS CLÍNICOS VITAMIN D
+// ══════════════════════════════════════════════════
+const VITAMIN_D = {
+  V: {
+    letra: 'V', titulo: 'Vascular',
+    perro: ['Accidente vascular encefálico','Trombosis aórtica','Coagulopatías','Hemorragia intracraneal secundaria a trauma'],
+    gato: ['Tromboembolismo aórtico felino','Cardiomiopatía hipertrófica con eventos tromboembólicos','Hemorragias por hipertensión','Accidente vascular encefálico']
+  },
+  I1: {
+    letra: 'I', titulo: 'Infeccioso / Inflamatorio',
+    perro: ['Moquillo','MUO','Ehrlichiosis / Anaplasmosis','Toxoplasmosis','Neosporosis'],
+    gato: ['PIF','VIF','FeLV','Toxoplasmosis','Meningoencefalitis infecciosa']
+  },
+  T: {
+    letra: 'T', titulo: 'Traumático / Tóxico',
+    perro: ['TEC','Lesión medular traumática','Organofosforados','Rodenticidas'],
+    gato: ['Síndrome del gato paracaidista','Trauma craneal','Intoxicaciones','Lesión medular']
+  },
+  A: {
+    letra: 'A', titulo: 'Autoinmune / Alérgico',
+    perro: ['Lupus','Poliartritis inmunomediada','Anemia hemolítica','Meningoencefalitis autoinmune'],
+    gato: ['Anemia hemolítica','EII','Granuloma eosinofílico','Alergias dermatológicas']
+  },
+  M: {
+    letra: 'M', titulo: 'Metabólico',
+    perro: ['Hipotiroidismo','Hipoglicemia','Insuficiencia hepática','Cushing'],
+    gato: ['Hipertiroidismo','Diabetes','Lipidosis hepática','IRC']
+  },
+  I2: {
+    letra: 'I', titulo: 'Idiopático / Iatrogénico',
+    perro: ['Epilepsia idiopática','Reacciones a fármacos','Síndrome vestibular idiopático'],
+    gato: ['Epilepsia idiopática','Reacciones a fármacos','Síndrome vestibular idiopático']
+  },
+  N: {
+    letra: 'N', titulo: 'Neoplásico',
+    perro: ['Gliomas / meningiomas','Linfoma','Tumores medulares','Metástasis'],
+    gato: ['Linfoma SNC','Meningioma','Tumores nasales invasivos','Neoplasias sistémicas']
+  },
+  D: {
+    letra: 'D', titulo: 'Degenerativo / Deficiencia',
+    perro: ['Enfermedad disco intervertebral','Mielopatía degenerativa','Espondilosis','Deficiencias nutricionales'],
+    gato: ['Degeneración articular','Neuropatías','Degeneración por edad','Deficiencias nutricionales']
+  }
+};
+
+const EXAMENES = {
+  'Laboratorio': ['Hemograma','Perfil bioquímico','Electrolitos','Gases','Perfil endocrino','Ácidos biliares'],
+  'Infecciosas': ['PCR','Serología','Test rápidos','Coproparasitológico','Frotis'],
+  'Imagenología': ['Radiografía','Mielografía','TAC','RM'],
+  'Electrofisiología': ['Electromiografía','Conducción nerviosa','Potenciales evocados'],
+  'Líquidos biológicos': ['LCR','Citología','Cultivo'],
+};
+
+const CLINICAS = ['NCVA','CVA','Villarrica','Pucón','Otra'];
+const ESTADOS = [
+  { id: 'tratamiento', label: 'En tratamiento', color: '#F4D03F', icon: '💊' },
+  { id: 'alta', label: 'Alta', color: '#2ECC71', icon: '✅' },
+  { id: 'derivar', label: 'Derivar a neurocirugía', color: '#3498DB', icon: '🔬' },
+];
+
+// ══════════════════════════════════════════════════
+// PIN / AUTH
+// ══════════════════════════════════════════════════
+let pinBuffer = '';
+const DEFAULT_PIN = '1234';
+
+function getPin() { return localStorage.getItem('ncva_pin') || DEFAULT_PIN; }
+
+function pinDigit(d) {
+  if (pinBuffer.length >= 4) return;
+  pinBuffer += d;
+  updatePinDots();
+  if (pinBuffer.length === 4) {
+    setTimeout(checkPin, 150);
+  }
+}
+function pinClear() { pinBuffer = pinBuffer.slice(0,-1); updatePinDots(); }
+function updatePinDots() {
+  for(let i=0;i<4;i++) {
+    document.getElementById('d'+i).classList.toggle('filled', i < pinBuffer.length);
+  }
+}
+function checkPin() {
+  if (pinBuffer === getPin()) {
+    document.getElementById('pin-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    renderPacientes();
+    renderDashboard();
+  } else {
+    document.getElementById('pin-error').textContent = 'PIN incorrecto. Intenta de nuevo.';
+    pinBuffer = '';
+    updatePinDots();
+    setTimeout(()=>{ document.getElementById('pin-error').textContent=''; }, 2000);
+  }
+}
+function lockApp() {
+  pinBuffer = '';
+  updatePinDots();
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('pin-screen').style.display = 'flex';
+}
+function showPinSetup() {
+  document.getElementById('modal-pin-setup').classList.remove('hidden');
+}
+function closePinSetup() { document.getElementById('modal-pin-setup').classList.add('hidden'); }
+function doChangePin() {
+  const old = document.getElementById('pin-old').value;
+  const n1 = document.getElementById('pin-new1').value;
+  const n2 = document.getElementById('pin-new2').value;
+  const msg = document.getElementById('pin-change-msg');
+  if (old !== getPin()) { msg.textContent = 'PIN actual incorrecto.'; return; }
+  if (n1.length < 4) { msg.textContent = 'El PIN debe tener 4 dígitos.'; return; }
+  if (n1 !== n2) { msg.textContent = 'Los PINs nuevos no coinciden.'; return; }
+  if (!/^\d{4}$/.test(n1)) { msg.textContent = 'Solo se permiten números.'; return; }
+  localStorage.setItem('ncva_pin', n1);
+  closePinSetup();
+  showToast('✅ PIN actualizado correctamente');
+  document.getElementById('pin-old').value='';
+  document.getElementById('pin-new1').value='';
+  document.getElementById('pin-new2').value='';
+  msg.textContent='';
+}
+
+// ══════════════════════════════════════════════════
+// INDEXED DB
+// ══════════════════════════════════════════════════
+let db;
+function initDB() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open('NCVA_DB', 1);
+    req.onupgradeneeded = e => {
+      const d = e.target.result;
+      if (!d.objectStoreNames.contains('pacientes')) {
+        const s = d.createObjectStore('pacientes', {keyPath:'id', autoIncrement:true});
+        s.createIndex('ficha','ficha',{unique:false});
+      }
+    };
+    req.onsuccess = e => { db = e.target.result; res(); };
+    req.onerror = () => rej(req.error);
+  });
+}
+function dbAll() {
+  return new Promise(res => {
+    const tx = db.transaction('pacientes','readonly');
+    tx.objectStore('pacientes').getAll().onsuccess = e => res(e.target.result);
+  });
+}
+function dbGet(id) {
+  return new Promise(res => {
+    db.transaction('pacientes','readonly').objectStore('pacientes').get(id).onsuccess = e => res(e.target.result);
+  });
+}
+function dbPut(item) {
+  return new Promise(res => {
+    db.transaction('pacientes','readwrite').objectStore('pacientes').put(item).onsuccess = e => res(e.target.result);
+  });
+}
+function dbDelete(id) {
+  return new Promise(res => {
+    db.transaction('pacientes','readwrite').objectStore('pacientes').delete(id).onsuccess = () => res();
+  });
+}
+
+// ══════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════
+function showSection(name, tab) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('sec-'+name).classList.add('active');
+  tab.classList.add('active');
+  if (name === 'dashboard') renderDashboard();
+}
+
+// ══════════════════════════════════════════════════
+// RENDER LISTA PACIENTES
+// ══════════════════════════════════════════════════
+async function renderPacientes() {
+  const q = (document.getElementById('search-input').value || '').toLowerCase();
+  const all = await dbAll();
+  const filtered = q ? all.filter(p => 
+    p.ficha.toLowerCase().includes(q) || 
+    p.clinica.toLowerCase().includes(q) ||
+    p.especie.toLowerCase().includes(q)
+  ) : all;
+
+  const container = document.getElementById('paciente-list-container');
+  if (!filtered.length) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">🐾</div><p>${q ? 'Sin resultados para "'+q+'"' : 'No hay pacientes registrados aún.'}<br><br><button class="btn btn-primary" onclick="openNewPaciente()">+ Registrar primer paciente</button></p></div>`;
+    return;
+  }
+
+  container.innerHTML = `<div class="paciente-list">${filtered.sort((a,b)=>b.id-a.id).map(p => {
+    const estObj = ESTADOS.find(e=>e.id===p.estado)||ESTADOS[0];
+    const estClass = p.estado==='alta'?'estado-alta':p.estado==='derivar'?'estado-derivar':'estado-tratamiento';
+    return `<div class="paciente-item" onclick="openDetalle(${p.id})">
+      <div class="paciente-info">
+        <div class="paciente-ficha">${p.especie==='perro'?'🐶':'🐱'} Ficha #${p.ficha}</div>
+        <div class="paciente-meta">${p.clinica} · ${p.fechaIngreso} · ${p.especie==='perro'?'Perro':'Gato'}</div>
+        ${p.diagnosticos && p.diagnosticos.length ? `<div class="resumen-tags">${p.diagnosticos.slice(0,3).map(d=>`<span class="resumen-tag">${d}</span>`).join('')}${p.diagnosticos.length>3?`<span class="resumen-tag">+${p.diagnosticos.length-3}</span>`:''}</div>` : ''}
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+        <span class="paciente-estado ${estClass}">${estObj.label}</span>
+        <div class="paciente-actions" onclick="event.stopPropagation()">
+          <button class="btn btn-secondary btn-sm btn-icon" onclick="openEditPaciente(${p.id})" title="Editar">✏️</button>
+          <button class="btn btn-danger btn-sm btn-icon" onclick="confirmDelete(${p.id})" title="Eliminar">🗑</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+// ══════════════════════════════════════════════════
+// WIZARD NUEVO / EDITAR PACIENTE
+// ══════════════════════════════════════════════════
+let wiz = {};
+
+function openNewPaciente() {
+  const hoy = new Date().toLocaleDateString('es-CL');
+  wiz = {
+    id: null, ficha: '', clinica: '', especie: '',
+    diagnosticos: [], examenes: [], examenOtros: '', estado: 'tratamiento',
+    fechaIngreso: hoy, step: 0
+  };
+  document.getElementById('modal-title').textContent = 'Nuevo Paciente';
+  document.getElementById('modal-paciente').classList.remove('hidden');
+  renderWizStep();
+}
+
+async function openEditPaciente(id) {
+  const p = await dbGet(id);
+  wiz = {...p, step: 0};
+  document.getElementById('modal-title').textContent = 'Editar Paciente';
+  document.getElementById('modal-paciente').classList.remove('hidden');
+  renderWizStep();
+}
+
+function closeModal() {
+  document.getElementById('modal-paciente').classList.add('hidden');
+}
+
+const WIZ_STEPS = ['datos','diagnostico','examenes','estado'];
+
+function renderWizStep() {
+  const body = document.getElementById('modal-body');
+  const footer = document.getElementById('modal-footer');
+  const step = wiz.step;
+
+  const stepsHtml = `<div class="wizard-steps">${WIZ_STEPS.map((s,i)=>`<div class="wizard-step ${i===step?'active':i<step?'done':''}"></div>`).join('')}</div>`;
+
+  if (step === 0) {
+    body.innerHTML = `
+      <div class="form-group">
+        <label class="form-label">Número de ficha *</label>
+        <input type="text" class="form-input" id="w-ficha" placeholder="Ej: 2024-001" value="${wiz.ficha}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Clínica de origen *</label>
+        <select class="form-select" id="w-clinica">
+          <option value="">Seleccionar…</option>
+          ${CLINICAS.map(c=>`<option value="${c}" ${wiz.clinica===c?'selected':''}>${c}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Especie *</label>
+        <div class="especie-toggle">
+          <div class="especie-btn ${wiz.especie==='perro'?'selected':''}" onclick="selEspecie('perro')">
+            🐶<span>Perro</span>
+          </div>
+          <div class="especie-btn ${wiz.especie==='gato'?'selected':''}" onclick="selEspecie('gato')">
+            🐱<span>Gato</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Fecha de ingreso</label>
+        <input type="text" class="form-input" value="${wiz.fechaIngreso}" disabled>
+      </div>
+    `;
+    footer.innerHTML = `${stepsHtml}<div style="display:flex;gap:8px"><button class="btn btn-secondary" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="wizNext()">Siguiente →</button></div>`;
+
+  } else if (step === 1) {
+    const esp = wiz.especie;
+    body.innerHTML = `
+      <p style="font-size:13px;color:var(--gris3);margin-bottom:12px">Mostrando diagnósticos para <strong>${esp==='perro'?'🐶 Perro':'🐱 Gato'}</strong></p>
+      <input type="text" class="diag-search" id="diag-search" placeholder="Buscar diagnóstico…" oninput="filterDiag()" autocomplete="off">
+      <div class="accordion" id="vitamin-accordion"></div>
+    `;
+    renderVitaminAccordion();
+    footer.innerHTML = `${stepsHtml}<div style="display:flex;gap:8px"><button class="btn btn-secondary" onclick="wizPrev()">← Atrás</button><button class="btn btn-primary" onclick="wizNext()">Siguiente →</button></div>`;
+
+  } else if (step === 2) {
+    body.innerHTML = `<div class="exam-categories" id="exam-cats"></div>
+      <div style="margin-top:16px">
+        <div class="exam-cat-title">Otros</div>
+        <input type="text" class="form-input otros-input" id="exam-otros" placeholder="Especificar otro examen…" value="${wiz.examenOtros||''}">
+      </div>
+    `;
+    renderExamenes();
+    footer.innerHTML = `${stepsHtml}<div style="display:flex;gap:8px"><button class="btn btn-secondary" onclick="wizPrev()">← Atrás</button><button class="btn btn-primary" onclick="wizNext()">Siguiente →</button></div>`;
+
+  } else if (step === 3) {
+    body.innerHTML = `
+      <div class="form-group">
+        <label class="form-label">Estado del paciente</label>
+        <div class="estado-options">
+          ${ESTADOS.map(e=>`<div class="estado-option ${wiz.estado===e.id?'selected':''}" onclick="selEstado('${e.id}')">
+            <div class="estado-dot" style="background:${e.color}"></div>
+            <div>${e.icon} <strong>${e.label}</strong></div>
+          </div>`).join('')}
+        </div>
+      </div>
+      <div style="margin-top:20px;padding:16px;background:var(--gris);border-radius:12px">
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:var(--gris3)">RESUMEN</div>
+        <div style="font-size:14px;margin-bottom:6px"><strong>Ficha:</strong> #${wiz.ficha} · ${wiz.clinica} · ${wiz.especie==='perro'?'🐶 Perro':'🐱 Gato'}</div>
+        <div style="font-size:14px;margin-bottom:6px"><strong>Diagnósticos:</strong> ${wiz.diagnosticos.length ? wiz.diagnosticos.join(', ') : 'Ninguno'}</div>
+        <div style="font-size:14px"><strong>Exámenes:</strong> ${[...wiz.examenes,...(wiz.examenOtros?[wiz.examenOtros]:[])].join(', ')||'Ninguno'}</div>
+      </div>
+    `;
+    footer.innerHTML = `${stepsHtml}<div style="display:flex;gap:8px"><button class="btn btn-secondary" onclick="wizPrev()">← Atrás</button><button class="btn btn-success" onclick="savePaciente()">✅ Guardar</button></div>`;
+  }
+}
+
+function selEspecie(esp) {
+  wiz.especie = esp;
+  document.querySelectorAll('.especie-btn').forEach(b => b.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+}
+
+function selEstado(id) {
+  wiz.estado = id;
+  document.querySelectorAll('.estado-option').forEach(o=>o.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+}
+
+function wizNext() {
+  const step = wiz.step;
+  if (step === 0) {
+    const f = document.getElementById('w-ficha').value.trim();
+    const c = document.getElementById('w-clinica').value;
+    if (!f) { showToast('⚠️ Ingresa número de ficha'); return; }
+    if (!c) { showToast('⚠️ Selecciona clínica de origen'); return; }
+    if (!wiz.especie) { showToast('⚠️ Selecciona la especie'); return; }
+    wiz.ficha = f; wiz.clinica = c;
+  }
+  if (step === 2) {
+    wiz.examenOtros = document.getElementById('exam-otros').value.trim();
+  }
+  wiz.step++;
+  renderWizStep();
+}
+
+function wizPrev() {
+  if (wiz.step === 2) {
+    wiz.examenOtros = document.getElementById('exam-otros')?.value.trim()||wiz.examenOtros;
+  }
+  wiz.step--;
+  renderWizStep();
+}
+
+async function savePaciente() {
+  const item = {
+    ficha: wiz.ficha, clinica: wiz.clinica, especie: wiz.especie,
+    diagnosticos: [...wiz.diagnosticos], examenes: [...wiz.examenes],
+    examenOtros: wiz.examenOtros, estado: wiz.estado, fechaIngreso: wiz.fechaIngreso
+  };
+  if (wiz.id) item.id = wiz.id;
+  await dbPut(item);
+  closeModal();
+  renderPacientes();
+  renderDashboard();
+  showToast(wiz.id ? '✅ Paciente actualizado' : '✅ Paciente guardado');
+}
+
+// ══════════════════════════════════════════════════
+// ACCORDION VITAMIN D
+// ══════════════════════════════════════════════════
+function renderVitaminAccordion() {
+  const acc = document.getElementById('vitamin-accordion');
+  if (!acc) return;
+  const esp = wiz.especie;
+  acc.innerHTML = Object.entries(VITAMIN_D).map(([key, cat]) => {
+    const items = cat[esp] || [];
+    return `<div class="acc-item" id="acc-${key}">
+      <div class="acc-header" onclick="toggleAcc('${key}')">
+        <div class="acc-header-left">
+          <div class="acc-letter">${cat.letra}</div>
+          <div><div class="acc-title">${cat.titulo}</div>
+          <div class="acc-subtitle">${items.length} diagnósticos</div></div>
+        </div>
+        <span class="acc-chevron">▾</span>
+      </div>
+      <div class="acc-body">
+        <div class="diag-list" id="diag-${key}">
+          ${items.map(d=>`<div class="diag-chip ${wiz.diagnosticos.includes(d)?'selected':''}" onclick="toggleDiag('${d.replace(/'/g,"\\'")}')">
+            <div class="diag-check"></div>${d}
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleAcc(key) {
+  const item = document.getElementById('acc-'+key);
+  item.classList.toggle('open');
+}
+
+function toggleDiag(diag) {
+  const idx = wiz.diagnosticos.indexOf(diag);
+  if (idx === -1) wiz.diagnosticos.push(diag);
+  else wiz.diagnosticos.splice(idx,1);
+  renderVitaminAccordion();
+  if (document.getElementById('diag-search').value) filterDiag();
+}
+
+function filterDiag() {
+  const q = document.getElementById('diag-search').value.toLowerCase();
+  if (!q) { renderVitaminAccordion(); return; }
+  Object.entries(VITAMIN_D).forEach(([key, cat]) => {
+    const items = cat[wiz.especie] || [];
+    const matched = items.filter(d => d.toLowerCase().includes(q));
+    const list = document.getElementById('diag-'+key);
+    const accItem = document.getElementById('acc-'+key);
+    if (list) list.innerHTML = matched.map(d=>`<div class="diag-chip ${wiz.diagnosticos.includes(d)?'selected':''}" onclick="toggleDiag('${d.replace(/'/g,"\\'")}')"><div class="diag-check"></div>${d}</div>`).join('');
+    if (accItem) accItem.classList.toggle('open', matched.length > 0);
+  });
+}
+
+// ══════════════════════════════════════════════════
+// EXÁMENES
+// ══════════════════════════════════════════════════
+function renderExamenes() {
+  const container = document.getElementById('exam-cats');
+  if (!container) return;
+  container.innerHTML = Object.entries(EXAMENES).map(([cat, items]) => `
+    <div>
+      <div class="exam-cat-title">${cat}</div>
+      <div class="exam-chips">
+        ${items.map(ex=>`<div class="exam-chip ${wiz.examenes.includes(ex)?'selected':''}" onclick="toggleExam('${ex}')">${ex}</div>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleExam(ex) {
+  const idx = wiz.examenes.indexOf(ex);
+  if (idx===-1) wiz.examenes.push(ex);
+  else wiz.examenes.splice(idx,1);
+  renderExamenes();
+}
+
+// ══════════════════════════════════════════════════
+// DETALLE PACIENTE
+// ══════════════════════════════════════════════════
+async function openDetalle(id) {
+  const p = await dbGet(id);
+  const estObj = ESTADOS.find(e=>e.id===p.estado)||ESTADOS[0];
+  const examAll = [...p.examenes,...(p.examenOtros?[p.examenOtros]:[])];
+  document.getElementById('detalle-title').textContent = `${p.especie==='perro'?'🐶':'🐱'} Ficha #${p.ficha}`;
+  document.getElementById('detalle-body').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+      <div class="card" style="margin:0"><div class="card-body" style="padding:16px">
+        <div class="form-label">Clínica</div><div style="font-size:15px;font-weight:600">${p.clinica}</div>
+      </div></div>
+      <div class="card" style="margin:0"><div class="card-body" style="padding:16px">
+        <div class="form-label">Especie</div><div style="font-size:15px;font-weight:600">${p.especie==='perro'?'🐶 Perro':'🐱 Gato'}</div>
+      </div></div>
+      <div class="card" style="margin:0"><div class="card-body" style="padding:16px">
+        <div class="form-label">Ingreso</div><div style="font-size:15px;font-weight:600">${p.fechaIngreso}</div>
+      </div></div>
+      <div class="card" style="margin:0"><div class="card-body" style="padding:16px">
+        <div class="form-label">Estado</div>
+        <div style="font-size:15px;font-weight:600">${estObj.icon} ${estObj.label}</div>
+      </div></div>
+    </div>
+    <div class="card" style="margin-bottom:16px"><div class="card-header"><div class="card-title">🧬 Diagnósticos diferenciales</div></div>
+      <div class="card-body">
+        ${p.diagnosticos && p.diagnosticos.length ? `<div class="resumen-tags">${p.diagnosticos.map(d=>`<span class="resumen-tag">${d}</span>`).join('')}</div>` : '<span style="color:var(--gris3)">No registrados</span>'}
+      </div></div>
+    <div class="card"><div class="card-header"><div class="card-title">🔬 Exámenes solicitados</div></div>
+      <div class="card-body">
+        ${examAll.length ? `<div class="exam-chips">${examAll.map(e=>`<div class="exam-chip selected">${e}</div>`).join('')}</div>` : '<span style="color:var(--gris3)">No registrados</span>'}
+      </div></div>
+  `;
+  document.getElementById('detalle-footer').innerHTML = `
+    <button class="btn btn-secondary" onclick="closeDetalle()">Cerrar</button>
+    <button class="btn btn-primary" onclick="closeDetalle();openEditPaciente(${id})">✏️ Editar</button>
+  `;
+  document.getElementById('modal-detalle').classList.remove('hidden');
+}
+function closeDetalle() { document.getElementById('modal-detalle').classList.add('hidden'); }
+
+// ══════════════════════════════════════════════════
+// ELIMINAR
+// ══════════════════════════════════════════════════
+function confirmDelete(id) {
+  if (confirm('¿Eliminar este paciente? Esta acción no se puede deshacer.')) {
+    dbDelete(id).then(()=>{ renderPacientes(); renderDashboard(); showToast('🗑 Paciente eliminado'); });
+  }
+}
+
+// ══════════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════════
+async function renderDashboard() {
+  const all = await dbAll();
+  const total = all.length;
+  const perros = all.filter(p=>p.especie==='perro').length;
+  const gatos = all.filter(p=>p.especie==='gato').length;
+  const examTotal = all.reduce((s,p)=>s+(p.examenes?.length||0)+(p.examenOtros?1:0),0);
+
+  document.getElementById('stats-grid').innerHTML = `
+    <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-label">Total pacientes</div></div>
+    <div class="stat-card"><div class="stat-num">🐶 ${perros}</div><div class="stat-label">Perros</div></div>
+    <div class="stat-card"><div class="stat-num">🐱 ${gatos}</div><div class="stat-label">Gatos</div></div>
+    <div class="stat-card"><div class="stat-num">${examTotal}</div><div class="stat-label">Exámenes solicitados</div></div>
+  `;
+
+  // Especie chart
+  const esp = document.getElementById('chart-especie');
+  const maxEsp = Math.max(perros, gatos, 1);
+  esp.innerHTML = `<div class="chart-bar-container">
+    <div class="chart-bar-row"><div class="chart-bar-label">🐶 Perros</div><div class="chart-bar-track"><div class="chart-bar-fill" style="width:${perros/maxEsp*100}%"></div></div><div class="chart-bar-count">${perros}</div></div>
+    <div class="chart-bar-row"><div class="chart-bar-label">🐱 Gatos</div><div class="chart-bar-track"><div class="chart-bar-fill" style="width:${gatos/maxEsp*100}%;background:linear-gradient(90deg,#6A2C91,#8B45B5)"></div></div><div class="chart-bar-count">${gatos}</div></div>
+  </div>`;
+
+  // Diagnósticos frecuentes
+  const diagCount = {};
+  all.forEach(p => (p.diagnosticos||[]).forEach(d=>{ diagCount[d]=(diagCount[d]||0)+1; }));
+  const topDiag = Object.entries(diagCount).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const maxD = topDiag[0]?.[1]||1;
+  document.getElementById('chart-diag').innerHTML = topDiag.length ? `<div class="chart-bar-container">${topDiag.map(([d,c])=>`<div class="chart-bar-row"><div class="chart-bar-label" style="font-size:12px">${d}</div><div class="chart-bar-track"><div class="chart-bar-fill" style="width:${c/maxD*100}%"></div></div><div class="chart-bar-count">${c}</div></div>`).join('')}</div>` : '<p style="color:var(--gris3)">Sin datos aún</p>';
+
+  // Clínicas
+  const clCount = {};
+  all.forEach(p=>{ clCount[p.clinica]=(clCount[p.clinica]||0)+1; });
+  const topCl = Object.entries(clCount).sort((a,b)=>b[1]-a[1]);
+  const maxC = topCl[0]?.[1]||1;
+  document.getElementById('chart-clinica').innerHTML = topCl.length ? `<div class="chart-bar-container">${topCl.map(([c,n])=>`<div class="chart-bar-row"><div class="chart-bar-label">${c}</div><div class="chart-bar-track"><div class="chart-bar-fill" style="width:${n/maxC*100}%"></div></div><div class="chart-bar-count">${n}</div></div>`).join('')}</div>` : '<p style="color:var(--gris3)">Sin datos aún</p>';
+}
+
+// ══════════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════════
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2800);
+}
+
+// ══════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════
+initDB().then(()=>{
+  console.log('NCVA DB lista');
+});
+
+// Cerrar modales con click fuera
+document.getElementById('modal-paciente').addEventListener('click', function(e){
+  if(e.target===this) closeModal();
+});
+document.getElementById('modal-detalle').addEventListener('click', function(e){
+  if(e.target===this) closeDetalle();
+});
+document.getElementById('modal-pin-setup').addEventListener('click', function(e){
+  if(e.target===this) closePinSetup();
+});
+</script>
+</body>
+</html>
